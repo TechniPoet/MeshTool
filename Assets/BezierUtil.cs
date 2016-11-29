@@ -78,6 +78,14 @@ public static class BezierUtil
         return Quaternion.LookRotation(tng, nrm);
     }
 
+
+    public static Vector3 GetFirstDerivative(Vector3 p0, Vector3 p1, Vector3 p2, float t) {
+        return
+            2f * (1f - t) * (p1 - p0) +
+            2f * t * (p2 - p1);
+    }
+
+
     public static void Extrude(Mesh mesh, ExtrudeShape shape, OrientedPoint[] path) {
         int vertsInShape = shape.verts.Length;
         int segments = path.Length - 1;

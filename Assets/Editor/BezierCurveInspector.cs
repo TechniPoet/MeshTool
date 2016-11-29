@@ -3,10 +3,10 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-[CustomEditor(typeof(BezierCurve))]
+[CustomEditor(typeof(Spline))]
 public class BezierCurveInspector : Editor
 {
-    private BezierCurve curve;
+    private Spline curve;
     private Transform handleTransform;
     private Quaternion handleRotation;
 
@@ -28,25 +28,31 @@ public class BezierCurveInspector : Editor
 
 
     void OnSceneGUI() {
-        curve = target as BezierCurve;
+        curve = target as Spline;
         handleTransform = curve.transform;
         handleRotation = Tools.pivotRotation == PivotRotation.Local ?
         handleTransform.rotation : Quaternion.identity;
         ShowPoints();
+        //Handles.DrawBezier(curve.points[0], curve.points[1], curve.points[2], curve.points[3], Color.blue, null, 2f);
         DrawBezier();
     }
 
 
     void DrawBezier() {
-        Handles.color = Color.white;
+        
         Debug.Log(curve.points);
-        Vector3 start = BezierUtil.GetPoint(curve.points, 0f);
+        Vector3 start = curve.transform.TransformPoint(BezierUtil.GetPoint(curve.points, 0f));
         float i = 0;
         while (i < 1) {
-            
-            i += .1f;
-            Vector3 end = BezierUtil.GetPoint(curve.points, i);
+            Handles.color = Color.white;
+            i += .01f;
+            Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(curve.points, i));
             Handles.DrawLine(start, end);
+            /*
+            Handles.color = Color.green;
+            Vector3 velocity = (end - start) * 15;
+            Handles.DrawLine(end, end + velocity);
+            */
             start = end;
         }
     }
