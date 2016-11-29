@@ -1,5 +1,7 @@
 using UnityEditor;
 using UnityEngine;
+using System.Collections.Generic;
+
 
 [CustomEditor(typeof(BezierCurve))]
 public class BezierCurveInspector : Editor
@@ -8,42 +10,40 @@ public class BezierCurveInspector : Editor
     private Transform handleTransform;
     private Quaternion handleRotation;
 
-    private Vector3[] oldPoints;
+    private Vector3[] editorPoints;
     bool start = false;
 
     public override void OnInspectorGUI()
 	{
 		base.OnInspectorGUI();
+        // Todo: custom array to allow moving point ordor
+        if (GUILayout.Button("Add Point")) {
+            List<Vector3> temp = new List<Vector3>();
+            temp.AddRange(curve.points);
+            temp.Add(new Vector3(20, 10, 0));
+            curve.points = temp.ToArray();
+        }
         
 	}
 
 
     void OnSceneGUI() {
         curve = target as BezierCurve;
-        if (curve.points.Length < 3) {
-            curve.Reset();
-        }
-        
-        if (oldPoints != curve.points) {
-            curve.Reset();
-        }
-        
         handleTransform = curve.transform;
         handleRotation = Tools.pivotRotation == PivotRotation.Local ?
         handleTransform.rotation : Quaternion.identity;
-
         ShowPoints();
-        oldPoints = curve.points;
     }
 
 
     void ShowPoints() {
+        editorPoints = new Vector3[curve.points.Length];
         for (int i = 0; i < curve.points.Length; i++) {
-            curve.points[i] = ShowPoint(i);
+            editorPoints[i] = ShowPoint(i);
         }
         Handles.color = Color.white;
-        for (int i = 1; i < curve.points.Length; i++) {
-            Handles.DrawLine(curve.points[i-1], curve.points[i]);
+        for (int i = 1; i < editorPoints.Length; i++) {
+            Handles.DrawLine(editorPoints[i-1], editorPoints[i]);
         }
     }
 
