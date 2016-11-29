@@ -15,6 +15,7 @@ public static class BezierUtil
     */
 
     // use bernstein curves
+    
     public static Vector3 GetPoint(Vector3[] pts, float t) {
         float omt = 1f - t;
         float omt2 = omt * omt;
@@ -24,6 +25,20 @@ public static class BezierUtil
                pts[2] * (3f * omt * t2) +
                pts[3] * (t2 * t);
     }
+
+    /*
+    public static Vector3 GetPoint(Vector3[] pts, float t) {
+        float t2 = t * t;
+        float t3 = t2 * t;
+        float it = (1 - t);
+        float it2 = it * it;
+        float it3 = it * it * it;
+
+        return pts[0] * (it3) +
+            pts[1] * (3 * it2 * t) +
+            pts[2] * (3 * it * t2) +
+            pts[3] * t3; ;
+    }*/
 
 
     public static Vector3 GetTangent(Vector3[] pts, float t) {

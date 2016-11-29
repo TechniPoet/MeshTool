@@ -33,6 +33,22 @@ public class BezierCurveInspector : Editor
         handleRotation = Tools.pivotRotation == PivotRotation.Local ?
         handleTransform.rotation : Quaternion.identity;
         ShowPoints();
+        DrawBezier();
+    }
+
+
+    void DrawBezier() {
+        Handles.color = Color.white;
+        Debug.Log(curve.points);
+        Vector3 start = BezierUtil.GetPoint(curve.points, 0f);
+        float i = 0;
+        while (i < 1) {
+            
+            i += .1f;
+            Vector3 end = BezierUtil.GetPoint(curve.points, i);
+            Handles.DrawLine(start, end);
+            start = end;
+        }
     }
 
 
@@ -41,7 +57,7 @@ public class BezierCurveInspector : Editor
         for (int i = 0; i < curve.points.Length; i++) {
             editorPoints[i] = ShowPoint(i);
         }
-        Handles.color = Color.white;
+        Handles.color = Color.grey;
         for (int i = 1; i < editorPoints.Length; i++) {
             Handles.DrawLine(editorPoints[i-1], editorPoints[i]);
         }
