@@ -17,12 +17,16 @@ public class SplineInspector : Editor
 	{
         // Todo: custom array to allow moving point ordor
         if (GUILayout.Button("Add Spline")) {
+            Undo.RecordObject(curve, "Add Spline");
             curve.AddSpline();
             SceneView.RepaintAll();
+            EditorUtility.SetDirty(curve);
         }
         if (GUILayout.Button("Remove Spline")) {
+            Undo.RecordObject(curve, "Remove Spline");
             curve.RemoveSpline();
             SceneView.RepaintAll();
+            EditorUtility.SetDirty(curve);
         }
         
 	}

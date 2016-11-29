@@ -7,6 +7,8 @@ public class Spline : MonoBehaviour
     public Vector3[] points;
 
     public int splines = 1;
+
+
     public void Reset() {
         points = new Vector3[] {
             new Vector3(10f, 0f, 0f),
