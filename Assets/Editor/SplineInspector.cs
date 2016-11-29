@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 
 [CustomEditor(typeof(Spline))]
-public class BezierCurveInspector : Editor
+public class SplineInspector : Editor
 {
     private Spline curve;
     private Transform handleTransform;
@@ -15,13 +15,14 @@ public class BezierCurveInspector : Editor
 
     public override void OnInspectorGUI()
 	{
-		base.OnInspectorGUI();
         // Todo: custom array to allow moving point ordor
-        if (GUILayout.Button("Add Point")) {
-            List<Vector3> temp = new List<Vector3>();
-            temp.AddRange(curve.points);
-            temp.Add(new Vector3(20, 10, 0));
-            curve.points = temp.ToArray();
+        if (GUILayout.Button("Add Spline")) {
+            curve.AddSpline();
+            SceneView.RepaintAll();
+        }
+        if (GUILayout.Button("Remove Spline")) {
+            curve.RemoveSpline();
+            SceneView.RepaintAll();
         }
         
 	}
@@ -34,19 +35,22 @@ public class BezierCurveInspector : Editor
         handleTransform.rotation : Quaternion.identity;
         ShowPoints();
         //Handles.DrawBezier(curve.points[0], curve.points[1], curve.points[2], curve.points[3], Color.blue, null, 2f);
-        DrawBezier();
+        for (int i = 0; i < curve.splines; i++) {
+            DrawBezier(i);
+        }
+        
     }
 
 
-    void DrawBezier() {
-        
-        Debug.Log(curve.points);
-        Vector3 start = curve.transform.TransformPoint(BezierUtil.GetPoint(curve.points, 0f));
+    void DrawBezier(int splineInd) {
+
+        Vector3[] pnts = curve.GetSplinePoints(splineInd);
+        Vector3 start = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, 0f));
         float i = 0;
         while (i < 1) {
             Handles.color = Color.white;
             i += .01f;
-            Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(curve.points, i));
+            Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, i));
             Handles.DrawLine(start, end);
             /*
             Handles.color = Color.green;
