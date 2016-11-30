@@ -12,5 +12,7 @@ Class which ensures each mesh and material is unique so old materials and meshes
 
 ## Resources
 http://catlikecoding.com/unity/tutorials/curves-and-splines/ 
+
 http://www.gamasutra.com/blogs/JayelindaSuridge/20130903/199457/Modelling_by_numbers_Part_One_A.php
+
 https://www.youtube.com/watch?v=o9RK6O2kOKo
