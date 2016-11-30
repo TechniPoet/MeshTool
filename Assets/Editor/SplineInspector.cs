@@ -10,6 +10,11 @@ public class SplineInspector : Editor
     private Transform handleTransform;
     private Quaternion handleRotation;
 
+    private const float handleSize = 0.04f;
+    private const float pickSize = 0.06f;
+
+    private int selectedIndex = -1;
+
     private Vector3[] editorPoints;
     bool start = false;
 
@@ -80,13 +85,23 @@ public class SplineInspector : Editor
 
     Vector3 ShowPoint (int index) {
         Vector3 point = handleTransform.TransformPoint(curve.points[index]);
-        EditorGUI.BeginChangeCheck();
-        point = Handles.DoPositionHandle(point, handleRotation);
-        if (EditorGUI.EndChangeCheck()) {
-            Undo.RecordObject(curve, "MovePoint");
-            EditorUtility.SetDirty(curve);
-            curve.points[index] = handleTransform.InverseTransformPoint(point);
+        // size cubes to be uniform regardless of zoom or scale
+        float size = HandleUtility.GetHandleSize(point);
+        Handles.color = Color.white;
+        // Make points white cubes
+        if (Handles.Button(point, handleRotation, size * handleSize, size * pickSize, Handles.DotCap)) {
+            selectedIndex = index;
         }
+        if (selectedIndex == index) {
+            EditorGUI.BeginChangeCheck();
+            point = Handles.DoPositionHandle(point, handleRotation);
+            if (EditorGUI.EndChangeCheck()) {
+                Undo.RecordObject(curve, "MovePoint");
+                EditorUtility.SetDirty(curve);
+                curve.points[index] = handleTransform.InverseTransformPoint(point);
+            }
+        }
+        
         return point;
     }
 }
