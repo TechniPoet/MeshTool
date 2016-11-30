@@ -1,5 +1,6 @@
 # MeshTool
-
+This tool will be used for generating meshes in editor along splines.
+Furture work will include combining spline meshes with other types of generated meshes.
 
 ## Progress
 So far I have setup the custom inspector to generate a spline. This should allow for extending a spline as far as we want.
