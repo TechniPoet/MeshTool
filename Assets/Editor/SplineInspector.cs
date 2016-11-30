@@ -20,6 +20,10 @@ public class SplineInspector : Editor
 
     public override void OnInspectorGUI()
 	{
+        if (selectedIndex >= 0 && selectedIndex < curve.ControlPointCount) {
+            DrawSelectedPointInspector();
+            Repaint();
+        }
         // Todo: custom array to allow moving point ordor
         if (GUILayout.Button("Add Spline")) {
             Undo.RecordObject(curve, "Add Spline");
@@ -72,8 +76,8 @@ public class SplineInspector : Editor
 
 
     void ShowPoints() {
-        editorPoints = new Vector3[curve.points.Length];
-        for (int i = 0; i < curve.points.Length; i++) {
+        editorPoints = new Vector3[curve.ControlPointCount];
+        for (int i = 0; i < curve.ControlPointCount; i++) {
             editorPoints[i] = ShowPoint(i);
         }
         Handles.color = Color.grey;
@@ -84,7 +88,7 @@ public class SplineInspector : Editor
 
 
     Vector3 ShowPoint (int index) {
-        Vector3 point = handleTransform.TransformPoint(curve.points[index]);
+        Vector3 point = handleTransform.TransformPoint(curve.GetControlPoint(index));
         // size cubes to be uniform regardless of zoom or scale
         float size = HandleUtility.GetHandleSize(point);
         Handles.color = Color.white;
@@ -98,10 +102,23 @@ public class SplineInspector : Editor
             if (EditorGUI.EndChangeCheck()) {
                 Undo.RecordObject(curve, "MovePoint");
                 EditorUtility.SetDirty(curve);
-                curve.points[index] = handleTransform.InverseTransformPoint(point);
+                curve.SetControlPoint(index, handleTransform.InverseTransformPoint(point));
             }
         }
         
         return point;
+    }
+
+
+
+    private void DrawSelectedPointInspector() {
+        GUILayout.Label("Selected Point");
+        EditorGUI.BeginChangeCheck();
+        Vector3 point = EditorGUILayout.Vector3Field("Position", curve.GetControlPoint(selectedIndex));
+        if (EditorGUI.EndChangeCheck()) {
+            Undo.RecordObject(curve, "Move Point");
+            EditorUtility.SetDirty(curve);
+            curve.SetControlPoint(selectedIndex, point);
+        }
     }
 }
