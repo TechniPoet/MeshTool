@@ -80,10 +80,11 @@ public class SplineInspector : Editor
         Vector3[] pnts = curve.GetSplinePoints(splineInd);
         Vector3 start = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, 0f));
         curve.curvePoints.Add(start);
+        
         float i = 0;
         while (i < 1) {
             Handles.color = Color.red;
-            i += .01f;
+            i += .05f;
             Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, i));
             curve.curvePoints.Add(end);
             Handles.DrawLine(start, end);
@@ -94,6 +95,7 @@ public class SplineInspector : Editor
             */
             start = end;
         }
+        curve.curvePoints.RemoveAt(curve.curvePoints.Count - 1);
     }
 
 

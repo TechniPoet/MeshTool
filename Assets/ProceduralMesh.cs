@@ -21,9 +21,21 @@ public class ProceduralMesh : UniqueMesh
         }
     }
 
-    public Vector2 vert0, vert1, vert2, vert3;
-    public Vector2 norm0, norm1, norm2, norm3;
-    public float u0, u1, u2, u3;
+    public Vector2[] verts;
+
+    public int GetVertCount() {
+        return verts.Length;
+    }
+
+
+    public Vector2 GetVert(int ind) {
+        return verts[ind];
+    }
+    
+
+    public void SetVert(int ind, Vector2 val) {
+        verts[ind] = val;
+    }
 
     public void GenerateMesh() {
         mf = GetComponent<MeshFilter>();
@@ -32,15 +44,13 @@ public class ProceduralMesh : UniqueMesh
         mesh = mf.sharedMesh;
         s = Parent._Spline;
         shape = new ExtrudeShape();
-        shape.verts = new Vector2[] {
-            vert0, vert1, vert2, vert3
-        };
-        shape.normals = new Vector2[] {
-            norm0, norm1, norm2, norm3
-        };
-        shape.uCoords = new float[] {
-            u0, u1, u2, u3
-        };
+        shape.verts = verts;
+        shape.normals = new Vector2[GetVertCount()];
+        shape.uCoords = new float[GetVertCount()];
+        for (int i = 0; i < GetVertCount(); i++) {
+            shape.uCoords[i] = i / GetVertCount();
+            shape.normals[i] = new Vector2(1, 0);
+        }
         if (s != null) {
             OrientedPoint[] op = new OrientedPoint[s.curvePoints.Count];
             
@@ -48,6 +58,7 @@ public class ProceduralMesh : UniqueMesh
                 op[i] = new OrientedPoint(s.curvePoints[i], Quaternion.identity, (i / s.ControlPointCount));
             }
             BezierUtil.Extrude(ref mesh, shape, op);
+            mesh.RecalculateNormals();
         } else {
             Debug.Log("no s");
         }
