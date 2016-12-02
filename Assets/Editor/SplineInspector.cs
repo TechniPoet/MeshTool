@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class SplineInspector : Editor
 {
     private Spline curve;
+    private ProceduralMesh pMesh;
     private Transform handleTransform;
     private Quaternion handleRotation;
 
@@ -20,6 +21,7 @@ public class SplineInspector : Editor
 
     public override void OnInspectorGUI()
 	{
+        SetRefs();
         if (selectedIndex >= 0 && selectedIndex < curve.ControlPointCount) {
             DrawSelectedPointInspector();
             Repaint();
@@ -31,27 +33,45 @@ public class SplineInspector : Editor
             SceneView.RepaintAll();
             EditorUtility.SetDirty(curve);
         }
-        if (GUILayout.Button("Remove Spline")) {
-            Undo.RecordObject(curve, "Remove Spline");
-            curve.RemoveSpline();
+        if (curve.Splines > 1) {
+            if (GUILayout.Button("Remove Spline")) {
+                Undo.RecordObject(curve, "Remove Spline");
+                curve.RemoveSpline();
+                SceneView.RepaintAll();
+                EditorUtility.SetDirty(curve);
+            }
+        }
+        if (GUILayout.Button("Reset")) {
+            Undo.RecordObject(curve, "Reset");
+            curve.Reset();
             SceneView.RepaintAll();
-            EditorUtility.SetDirty(curve);
         }
         
 	}
 
 
+    void SetRefs() {
+        if (curve == null) {
+            curve = target as Spline;
+        }
+        if (pMesh == null) {
+            pMesh = curve.Parent._PMesh;
+        }
+    }
+
+
     void OnSceneGUI() {
-        curve = target as Spline;
+        SetRefs();
         handleTransform = curve.transform;
         handleRotation = Tools.pivotRotation == PivotRotation.Local ?
         handleTransform.rotation : Quaternion.identity;
         ShowPoints();
         //Handles.DrawBezier(curve.points[0], curve.points[1], curve.points[2], curve.points[3], Color.blue, null, 2f);
-        for (int i = 0; i < curve.splines; i++) {
+        curve.curvePoints.Clear();
+        for (int i = 0; i < curve.Splines; i++) {
             DrawBezier(i);
         }
-        
+        pMesh.GenerateMesh();
     }
 
 
@@ -59,11 +79,13 @@ public class SplineInspector : Editor
 
         Vector3[] pnts = curve.GetSplinePoints(splineInd);
         Vector3 start = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, 0f));
+        curve.curvePoints.Add(start);
         float i = 0;
         while (i < 1) {
-            Handles.color = Color.white;
+            Handles.color = Color.red;
             i += .01f;
             Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, i));
+            curve.curvePoints.Add(end);
             Handles.DrawLine(start, end);
             /*
             Handles.color = Color.green;

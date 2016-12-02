@@ -4,8 +4,22 @@ using System.Collections.Generic;
 
 public class Spline : MonoBehaviour
 {
+    [HideInInspector]
     [SerializeField]
     private Vector3[] points;
+
+    public List<Vector3> curvePoints = new List<Vector3>();
+
+    MeshTool parent;
+    public MeshTool Parent {
+        get {
+            if (parent == null) {
+                parent = GetComponentInParent<MeshTool>();
+            }
+            return parent;
+        }
+    }
+
 
     public int ControlPointCount {
         get {
@@ -21,7 +35,13 @@ public class Spline : MonoBehaviour
         points[index] = point;
     }
 
-    public int splines = 1;
+    public Vector3[] GetControlPoints() {
+        return points;
+    }
+
+    [HideInInspector]
+    private int splines = 1;
+    public int Splines { get { return splines; } }
 
 
     public void Reset() {
@@ -31,6 +51,7 @@ public class Spline : MonoBehaviour
             new Vector3(30f, 0f, 0f),
             new Vector3(40f, 0f, 0f)
         };
+        splines = 1;
     }
 
     public void AddSpline() {

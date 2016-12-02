@@ -1,61 +1,56 @@
 using UnityEngine;
 using System;
 
+
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
 public class ProceduralMesh : UniqueMesh
 {
+    Spline s;
+    MeshFilter mf;
+    Mesh mesh;
+    ExtrudeShape shape;
 
-	public void Awake()
-	{
-        MeshFilter mf = GetComponent<MeshFilter>();
-        if (mf.sharedMesh == null) {
-            mf.sharedMesh = new Mesh();
+    MeshTool parent;
+    public MeshTool Parent {
+        get {
+            if (parent == null) {
+                parent = GetComponentInParent<MeshTool>();
+            }
+            return parent;
         }
-        Mesh mesh = mf.sharedMesh;
-        Vector3[] vertices = new Vector3[] {
-            new Vector3(1, 0, 1),
-            new Vector3(-1, 0, 1),
-            new Vector3(1, 0, -1),
-            new Vector3(-1, 0, -1)
+    }
+
+    public Vector2 vert0, vert1, vert2, vert3;
+    public Vector2 norm0, norm1, norm2, norm3;
+    public float u0, u1, u2, u3;
+
+    public void GenerateMesh() {
+        mf = GetComponent<MeshFilter>();
+        mf.mesh = null;
+        mf.sharedMesh = new Mesh();
+        mesh = mf.sharedMesh;
+        s = Parent._Spline;
+        shape = new ExtrudeShape();
+        shape.verts = new Vector2[] {
+            vert0, vert1, vert2, vert3
         };
-        Vector3[] normals = new Vector3[] {
-            new Vector3(0, 1, 0),
-            new Vector3(0, 1, 0),
-            new Vector3(0, 1, 0),
-            new Vector3(0, 1, 0)
+        shape.normals = new Vector2[] {
+            norm0, norm1, norm2, norm3
         };
-        Vector2[] uvs = new Vector2[] {
-            new Vector2(0, 1),
-            new Vector2(0, 0),
-            new Vector2(1, 1),
-            new Vector2(1, 0)
+        shape.uCoords = new float[] {
+            u0, u1, u2, u3
         };
-        int[] triangles = new int[] {
-            0, 2, 3,
-            3, 1, 0
-        };
-
-        mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.normals = normals;
-        mesh.uv = uvs;
-        mesh.triangles = triangles;
-
-
-        //exctrude shape.
-
-        ExtrudeShape shape = new ExtrudeShape();
-        Vector3[] verts;
-        Vector3[] norms;
-        float[] us;
-        int[] lines = new int[] {
-            0, 1,
-            2,3,
-            3,4,
-            4,5,
-        };
-
-
-
+        if (s != null) {
+            OrientedPoint[] op = new OrientedPoint[s.curvePoints.Count];
+            
+            for (int i = 0; i < op.Length; i++) {
+                op[i] = new OrientedPoint(s.curvePoints[i], Quaternion.identity, (i / s.ControlPointCount));
+            }
+            BezierUtil.Extrude(ref mesh, shape, op);
+        } else {
+            Debug.Log("no s");
+        }
     }
 
     

@@ -14,16 +14,72 @@ public static class BezierUtil
     }
     */
 
-    // use bernstein curves
-    
-    public static Vector3 GetPoint(Vector3[] pts, float t) {
-        float omt = 1f - t;
-        float omt2 = omt * omt;
+    public static Vector3 GetPoint(Vector3[] pts, float t, out Vector3 tangent, out Vector3 normal, out Quaternion orientation) {
         float t2 = t * t;
-        return pts[0] * (omt2 * omt) +
-               pts[1] * (3f * omt2 * t) +
-               pts[2] * (3f * omt * t2) +
-               pts[3] * (t2 * t);
+        float t3 = t2 * t;
+        float it = (1 - t);
+        float it2 = it * it;
+        float it3 = it * it * it;
+
+        tangent = CalculateTangent(pts, t, t2, it2);
+        normal = CalculateNormal(tangent, Vector3.up);
+        orientation = Quaternion.LookRotation(tangent, normal);
+
+        return CalculatePoint(pts, t, t2, t3, it, it2, it3);
+    }
+
+    public static Vector3 GetPoint(Vector3[] pts, float t, out Vector3 tangent, out Vector3 normal) {
+        float t2 = t * t;
+        float t3 = t2 * t;
+        float it = (1 - t);
+        float it2 = it * it;
+        float it3 = it * it * it;
+
+        tangent = CalculateTangent(pts, t, t2, it2);
+        normal = CalculateNormal(tangent, Vector3.up);
+
+        return CalculatePoint(pts, t, t2, t3, it, it2, it3);
+    }
+
+    public static Vector3 GetPoint(Vector3[] pts, float t, out Vector3 tangent) {
+        float t2 = t * t;
+        float t3 = t2 * t;
+        float it = (1 - t);
+        float it2 = it * it;
+        float it3 = it * it * it;
+
+        tangent = CalculateTangent(pts, t, t2, it2);
+        return CalculatePoint(pts, t, t2, t3, it, it2, it3);
+    }
+
+    public static Vector3 GetPoint(Vector3[] pts, float t) {
+        float t2 = t * t;
+        float t3 = t2 * t;
+        float it = (1 - t);
+        float it2 = it * it;
+        float it3 = it * it * it;
+
+        return CalculatePoint(pts, t, t2, t3, it, it2, it3);
+    }
+
+
+    static Vector3 CalculateNormal(Vector3 tangent, Vector3 up) {
+        Vector3 binormal = Vector3.Cross(up, tangent);
+        return Vector3.Cross(tangent, binormal);
+    }
+
+    static Vector3 CalculateTangent(Vector3[] pts, float t, float t2, float it2) {
+        return (pts[0] * -it2 +
+            pts[1] * (t * (3 * t - 4) + 1) +
+            pts[2] * (-3 * t2 + t * 2) +
+            pts[3] * t2).normalized;
+    }
+
+    static Vector3 CalculatePoint(Vector3[] pts, float t, float t2, float t3, float it, float it2, float it3) {
+        return pts[0] * (it3) +
+            pts[1] * (3 * it2 * t) +
+            pts[2] * (3 * it * t2) +
+            pts[3] * t3;
     }
 
     /*
@@ -39,7 +95,14 @@ public static class BezierUtil
             pts[2] * (3 * it * t2) +
             pts[3] * t3; ;
     }*/
+    public static OrientedPoint GetOrientedPoint(Vector3[] pts, float t) {
+        Vector3 tangent, normal;
+        Quaternion orientation;
 
+        Vector3 point = GetPoint(pts, t, out tangent, out normal, out orientation);
+
+        return new OrientedPoint(point, orientation);
+    }
 
     public static Vector3 GetTangent(Vector3[] pts, float t) {
         float omt = 1f - t;
@@ -86,7 +149,7 @@ public static class BezierUtil
     }
 
 
-    public static void Extrude(Mesh mesh, ExtrudeShape shape, OrientedPoint[] path) {
+    public static void Extrude(ref Mesh mesh, ExtrudeShape shape, OrientedPoint[] path) {
         int vertsInShape = shape.verts.Length;
         int segments = path.Length - 1;
         int edgeLoops = path.Length;
@@ -98,6 +161,17 @@ public static class BezierUtil
         Vector3[] vertices = new Vector3[vertCount];
         Vector3[] normals = new Vector3[vertCount];
         Vector2[] uvs = new Vector2[vertCount];
+
+        // Generate all of the vertices and normals
+        for (int i = 0; i < path.Length; i++) {
+            int offset = i * vertsInShape;
+            for (int j = 0; j < vertsInShape; j++) {
+                int id = offset + j;
+                vertices[id] = path[i].LocalToWorld(shape.verts[j]);
+                normals[id] = path[i].LocalToWorldDirection(shape.normals[j]);
+                uvs[id] = new Vector2(shape.uCoords[j], path[i].vCoordinate);
+            }
+        }
 
         //Generation
         int ti = 0;
