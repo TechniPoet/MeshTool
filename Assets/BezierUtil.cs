@@ -148,6 +148,11 @@ public static class BezierUtil
             2f * t * (p2 - p1);
     }
 
+	public static float Cross(Vector2 p, Vector2 q)
+	{
+		return (p.x*q.y - p.y*q.x);
+	}
+
 
     public static void Extrude(ref Mesh mesh, ExtrudeShape shape, OrientedPoint[] path) {
         int vertsInShape = shape.verts.Length;
