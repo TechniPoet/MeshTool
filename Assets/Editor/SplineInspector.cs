@@ -71,7 +71,10 @@ public class SplineInspector : Editor
         for (int i = 0; i < curve.Splines; i++) {
             DrawBezier(i);
         }
-        pMesh.GenerateMesh();
+        if (!curve.Parent.manuallyUpdateMesh) {
+            pMesh.GenerateMesh();
+        }
+        
     }
 
 
@@ -79,14 +82,16 @@ public class SplineInspector : Editor
 
         Vector3[] pnts = curve.GetSplinePoints(splineInd);
         Vector3 start = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, 0f));
-        curve.curvePoints.Add(start);
+        //Vector3 start = BezierUtil.GetPoint(pnts, 0f);
+        curve.curvePoints.Add(curve.transform.InverseTransformPoint(start));
         
         float i = 0;
         while (i < 1) {
             Handles.color = Color.red;
-            i += .05f;
+            i += .25f;
             Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, i));
-            curve.curvePoints.Add(end);
+            //Vector3 end = BezierUtil.GetPoint(pnts, i);
+            curve.curvePoints.Add(curve.transform.InverseTransformPoint(end));
             Handles.DrawLine(start, end);
             /*
             Handles.color = Color.green;
@@ -95,7 +100,11 @@ public class SplineInspector : Editor
             */
             start = end;
         }
-        curve.curvePoints.RemoveAt(curve.curvePoints.Count - 1);
+        if (curve.Splines-1 != splineInd) {
+            // Avoid overlapping of curves
+            curve.curvePoints.RemoveAt(curve.curvePoints.Count - 1);
+        }
+        
     }
 
 
@@ -113,6 +122,7 @@ public class SplineInspector : Editor
 
     Vector3 ShowPoint (int index) {
         Vector3 point = handleTransform.TransformPoint(curve.GetControlPoint(index));
+        //Vector3 point = curve.GetControlPoint(index);
         // size cubes to be uniform regardless of zoom or scale
         float size = HandleUtility.GetHandleSize(point);
         Handles.color = Color.white;
@@ -127,6 +137,7 @@ public class SplineInspector : Editor
                 Undo.RecordObject(curve, "MovePoint");
                 EditorUtility.SetDirty(curve);
                 curve.SetControlPoint(index, handleTransform.InverseTransformPoint(point));
+                //curve.SetControlPoint(index, point);
             }
         }
         

@@ -12,6 +12,9 @@ public class ProceduralMeshInspector : Editor {
 
     public override void OnInspectorGUI() {
         SetRefs();
+        if (GUILayout.Button("Generate Mesh")) {
+            m.GenerateMesh();
+        }
         DrawDefaultInspector();
     }
 

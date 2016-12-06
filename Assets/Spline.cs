@@ -46,10 +46,10 @@ public class Spline : MonoBehaviour
 
     public void Reset() {
         points = new Vector3[] {
-            new Vector3(10f, 0f, 0f),
-            new Vector3(20f, 0f, 0f),
-            new Vector3(30f, 0f, 0f),
-            new Vector3(40f, 0f, 0f)
+            new Vector3(0f, 0f, -1.5f),
+            new Vector3(0f, 0f, -.5f),
+            new Vector3(0f, 0f, 1.5f),
+            new Vector3(0f, 0f, 2.5f)
         };
         splines = 1;
     }
