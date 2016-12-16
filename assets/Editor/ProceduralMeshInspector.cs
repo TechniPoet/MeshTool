@@ -33,7 +33,7 @@ public class ProceduralMeshInspector : Editor {
 
 
     void Show2DShape() {
-        editorVerts = new Vector2[m.GetVertCount()];
+        //editorVerts = new Vector2[m.GetVertCount()];
         //EditorGUI.DrawRect(new Rect(20,0, 150, 150), Color.white);
     }
 

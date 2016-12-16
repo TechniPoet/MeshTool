@@ -17,7 +17,6 @@ public class SplineInspector : Editor
     private int selectedIndex = -1;
 
     private Vector3[] editorPoints;
-    bool start = false;
 
     float timeSinceLastGen;
 

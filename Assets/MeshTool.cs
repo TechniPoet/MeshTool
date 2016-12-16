@@ -5,7 +5,6 @@ using System.Collections;
 [ExecuteInEditMode]
 public class MeshTool : MonoBehaviour
 {
-    public float timeSinceLastGen;
     ProceduralMesh pMesh;
     public ProceduralMesh _PMesh {
         get {
