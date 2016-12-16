@@ -161,8 +161,8 @@ public static class BezierUtil
         int vertCount = vertsInShape * edgeLoops;
         int triCount = shape.Lines.Length * segments;
         int triIndexCount = triCount * 3;
-        Debug.Log(string.Format("VertsInShape:{0}\nsegments:{1}\nedgeLoops:{2}\nvertCount:{3}\ntriCount:{4}\ntriIndexCount:{5}",
-            vertsInShape, segments, edgeLoops, vertCount, triCount, triIndexCount));
+        //Debug.Log(string.Format("VertsInShape:{0}\nsegments:{1}\nedgeLoops:{2}\nvertCount:{3}\ntriCount:{4}\ntriIndexCount:{5}",
+        //    vertsInShape, segments, edgeLoops, vertCount, triCount, triIndexCount));
         int[] triangleIndices = new int[triIndexCount];
         Vector3[] vertices = new Vector3[vertCount];
         Vector3[] normals = new Vector3[vertCount];
@@ -181,7 +181,7 @@ public static class BezierUtil
                 uvs[id] = new Vector2(shape.uCoords[j], path[i].vCoordinate);
                 debug += string.Format("id:{0}\nvert:{1}\nnormals:{2}\nuv:{3}\n", id, vertices[id], normals[id], uvs[id]);
             }
-            Debug.Log(debug);
+            //Debug.Log(debug);
         }
 
         //Generation
@@ -211,6 +211,6 @@ public static class BezierUtil
         for (int i = 0; i < mesh.vertices.Length; i++) {
             debugs += string.Format("vert {0}: {1}\n", i, mesh.vertices[i]);
         }
-        Debug.Log(debugs);
+        //Debug.Log(debugs);
     }
 }

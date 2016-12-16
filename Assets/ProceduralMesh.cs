@@ -40,10 +40,13 @@ public class ProceduralMesh : UniqueMesh
     public void GenerateMesh() {
         mf = GetComponent<MeshFilter>();
         mf.mesh = null;
-        mf.sharedMesh = new Mesh();
+        if (mf.sharedMesh == null)
+            mf.sharedMesh = new Mesh();
         mesh = mf.sharedMesh;
         s = Parent._Spline;
-        shape = new ExtrudeShape();
+        if (shape == null) {
+            shape = new ExtrudeShape();
+        }
         shape.verts = verts;
         shape.normals = new Vector2[GetVertCount()];
         shape.uCoords = new float[GetVertCount()];

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ExtrudeShape : MonoBehaviour
+public class ExtrudeShape
 {
     public Vector2[] verts;
     public Vector2[] normals;

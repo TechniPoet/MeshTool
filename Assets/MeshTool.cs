@@ -3,8 +3,9 @@ using System.Collections;
 
 
 [ExecuteInEditMode]
-public class MeshTool : MonoBehaviour {
-
+public class MeshTool : MonoBehaviour
+{
+    public float timeSinceLastGen;
     ProceduralMesh pMesh;
     public ProceduralMesh _PMesh {
         get {
@@ -25,10 +26,4 @@ public class MeshTool : MonoBehaviour {
     }
 
     public bool manuallyUpdateMesh;
-
-    void Update() {
-        if (!manuallyUpdateMesh) {
-            _PMesh.GenerateMesh();
-        }
-    }
 }

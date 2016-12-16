@@ -19,9 +19,12 @@ public class SplineInspector : Editor
     private Vector3[] editorPoints;
     bool start = false;
 
+    float timeSinceLastGen;
+
     public override void OnInspectorGUI()
 	{
         SetRefs();
+        GUILayout.Label("last gen: " + timeSinceLastGen);
         if (selectedIndex >= 0 && selectedIndex < curve.ControlPointCount) {
             DrawSelectedPointInspector();
             Repaint();
@@ -71,8 +74,13 @@ public class SplineInspector : Editor
         for (int i = 0; i < curve.Splines; i++) {
             DrawBezier(i);
         }
+        
         if (!curve.Parent.manuallyUpdateMesh) {
-            pMesh.GenerateMesh();
+            if (Time.realtimeSinceStartup - timeSinceLastGen > 0.01f) {
+                timeSinceLastGen = Time.realtimeSinceStartup;
+                //Debug.Log("gen");
+                pMesh.GenerateMesh();
+            }
         }
         
     }
