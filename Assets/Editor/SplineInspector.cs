@@ -23,7 +23,6 @@ public class SplineInspector : Editor
     public override void OnInspectorGUI()
 	{
         SetRefs();
-        GUILayout.Label("last gen: " + timeSinceLastGen);
         if (selectedIndex >= 0 && selectedIndex < curve.ControlPointCount) {
             DrawSelectedPointInspector();
             Repaint();
