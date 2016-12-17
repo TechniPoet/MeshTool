@@ -15,6 +15,8 @@ public class UniqueMesh : MonoBehaviour
             return _mf;
         }
     }
+    [System.NonSerialized]
+    public Mesh meshToSave;
     Mesh _mesh;
     protected Mesh mesh {
         get {
