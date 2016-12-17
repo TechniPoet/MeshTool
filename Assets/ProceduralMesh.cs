@@ -89,13 +89,17 @@ public class ProceduralMesh : UniqueMesh
 			//print(string.Format("{0}:{1}", i, normal.normalized));
 		}
 
+        float[] samples = BezierUtil.GenerateSamples(s.curvePoints.ToArray());
 		
 		if (s != null) {
             OrientedPoint[] op = new OrientedPoint[s.curvePoints.Count];
-            
+            string debug = "";
             for (int i = 0; i < op.Length; i++) {
-                op[i] = new OrientedPoint(s.curvePoints[i], Quaternion.identity, (i / s.ControlPointCount));
+                //op[i] = BezierUtil.GetOrientedPoint(s.curvePoints.ToArray(), ((float)i / (float)op.Length), samples);
+                op[i] = new OrientedPoint(s.curvePoints[i], Quaternion.identity, samples.Sample(((float)i / (float)op.Length)));
+                //debug += " " + op[i].vCoordinate;
             }
+            //Debug.Log(debug);
             BezierUtil.Extrude(ref mesh, shape, op);
             //mesh.RecalculateNormals();
         } else {

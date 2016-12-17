@@ -27,6 +27,6 @@ public class MeshTool : MonoBehaviour
     public bool manuallyUpdateMesh;
 
     void Update() {
-        _PMesh.GenerateMesh();
+        //_PMesh.GenerateMesh();
     }
 }

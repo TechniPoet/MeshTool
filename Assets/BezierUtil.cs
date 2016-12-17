@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+
 
 public static class BezierUtil
 {
@@ -103,6 +105,39 @@ public static class BezierUtil
 
         return new OrientedPoint(point, orientation);
     }
+
+
+    public static OrientedPoint GetOrientedPoint (Vector3[] pts, float t, float[] samples) {
+        Vector3 tangent, normal;
+        Quaternion orientation;
+
+        Vector3 point = GetPoint(pts, t, out tangent, out normal, out orientation);
+
+        return new OrientedPoint(point, orientation, samples.Sample(t));
+    }
+
+
+    public static float[] GenerateSamples (Vector3[] points) {
+        Vector3 prevPoint = points[0];
+        Vector3 pt;
+        float total = 0;
+
+        List<float> samples = new List<float>(10) { 0 };
+        float step = 1.0f / 10.0f;
+        for (float f = step; f < 1.0f; f += step) {
+            pt = GetPoint(points, f);
+            total += (pt - prevPoint).magnitude;
+            samples.Add(total);
+
+            prevPoint = pt;
+        }
+
+        pt = GetPoint(points, 1);
+        samples.Add(total + (pt - prevPoint).magnitude);
+
+        return samples.ToArray();
+    }
+
 
     public static Vector3 GetTangent(Vector3[] pts, float t) {
         float omt = 1f - t;

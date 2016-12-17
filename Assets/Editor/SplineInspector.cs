@@ -74,7 +74,7 @@ public class SplineInspector : Editor
         }
         
         if (!curve.Parent.manuallyUpdateMesh) {
-            if (Time.realtimeSinceStartup - timeSinceLastGen > 0.01f) {
+            if (Time.realtimeSinceStartup - timeSinceLastGen > .1f) {
                 timeSinceLastGen = Time.realtimeSinceStartup;
                 //Debug.Log("gen");
                 pMesh.GenerateMesh();
