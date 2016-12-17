@@ -7,9 +7,10 @@ using System;
 public class ProceduralMesh : UniqueMesh
 {
     Spline s;
+    [System.NonSerialized]
     public MeshFilter mf;
     
-    public new Mesh mesh;
+    new Mesh mesh;
     ExtrudeShape shape;
 
     MeshTool parent;
