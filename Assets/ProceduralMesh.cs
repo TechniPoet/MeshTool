@@ -1,5 +1,5 @@
 using UnityEngine;
-using System;
+using System.Collections.Generic;
 
 
 [RequireComponent(typeof(MeshFilter))]
@@ -23,10 +23,10 @@ public class ProceduralMesh : UniqueMesh
         }
     }
 
-    public Vector2[] verts;
+    public List<Vector2> verts;
 
     public int GetVertCount() {
-        return verts.Length;
+        return verts.Count;
     }
 
 
@@ -49,12 +49,19 @@ public class ProceduralMesh : UniqueMesh
         if (shape == null) {
             shape = new ExtrudeShape();
         }
-        shape.verts = verts;
+        shape.verts = verts.ToArray();
         shape.normals = new Vector2[GetVertCount()];
         shape.uCoords = new float[GetVertCount()];
 
+        float uLength = 0;
+        float[] pointPos = new float[GetVertCount()];
+        pointPos[0] = 0;
+        for (int i = 1; i < verts.Count; i++) {
+            uLength += Vector2.Distance(verts[i-1], verts[i]);
+            pointPos[i] = uLength;
+        }
         for (int i = 0; i < GetVertCount(); i++) {
-            shape.uCoords[i] = i / GetVertCount();
+            shape.uCoords[i] = pointPos[i] / uLength;
 			float dx, dy;
 			Vector2 normal;
 			if (i == 0)

@@ -94,7 +94,7 @@ public class SplineInspector : Editor
         float i = 0;
         while (i < 1) {
             Handles.color = Color.red;
-            i += .25f;
+            i += .1f;
             Vector3 end = curve.transform.TransformPoint(BezierUtil.GetPoint(pnts, i));
             //Vector3 end = BezierUtil.GetPoint(pnts, i);
             curve.curvePoints.Add(curve.transform.InverseTransformPoint(end));
